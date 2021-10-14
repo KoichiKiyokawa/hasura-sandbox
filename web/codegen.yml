@@ -1,0 +1,11 @@
+schema: http://localhost:8080/v1/graphql
+documents: queries/**/*.gql
+generates:
+  ./src/generated/gql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      # - typescript-document-nodes
+      - graphql-codegen-svelte-apollo
+    config:
+      clientPath: '../modules/client'
