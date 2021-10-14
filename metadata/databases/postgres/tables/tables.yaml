@@ -1,1 +1,4 @@
-- "!include public_product.yaml"
+- "!include public_categories.yaml"
+- "!include public_product_category.yaml"
+- "!include public_products.yaml"
+- "!include public_reservations.yaml"
