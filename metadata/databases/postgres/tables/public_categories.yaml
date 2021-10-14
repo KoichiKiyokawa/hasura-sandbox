@@ -9,3 +9,8 @@ array_relationships:
       table:
         name: product_category
         schema: public
+select_permissions:
+- permission:
+    columns: []
+    filter: {}
+  role: client
