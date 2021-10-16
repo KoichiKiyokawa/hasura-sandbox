@@ -1,6 +1,7 @@
 import { AppProps } from "next/app"
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client"
 import { GRAPHQL_ENDPOINT } from "../env"
+import { ChakraProvider } from "@chakra-ui/react"
 
 const client = new ApolloClient({
   uri: GRAPHQL_ENDPOINT,
@@ -10,7 +11,9 @@ const client = new ApolloClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
-      <Component {...pageProps} />
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
     </ApolloProvider>
   )
 }

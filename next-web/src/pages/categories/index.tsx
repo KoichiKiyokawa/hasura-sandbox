@@ -1,5 +1,9 @@
+import { Button } from "@chakra-ui/button"
+import { Input } from "@chakra-ui/input"
+import { Box, Container, Flex, HStack, Stack, Text } from "@chakra-ui/layout"
 import Link from "next/link"
 import { Fragment, useEffect, useMemo, useState } from "react"
+import { Loading } from "src/components/navigators/Loading"
 import {
   useGetCategoriesWithProductQuery,
   useUpdateCategoryMutation,
@@ -47,48 +51,79 @@ const CategoriesIndex = () => {
   }
 
   return (
-    <>
+    <Container>
       <Link href="/">トップに戻る</Link>
-      <h1>category index</h1>
-      {loading && <span>Loading...</span>}
+      <HStack>
+        <Text fontSize="2xl" fontWeight="bold">
+          category index
+        </Text>
+
+        <Link href="/categories/new" passHref>
+          <Button as="a">新規作成</Button>
+        </Link>
+      </HStack>
+
+      {loading && <Loading />}
       {error && <span>エラーが発生しました．</span>}
 
-      <Link href="/categories/new">新規作成</Link>
-      {categoryWithProducts.map((categoryWithProduct, i) => (
-        <ul key={i}>
-          <h2>
-            {isEditList[i] ? (
-              <>
-                <form
-                  onSubmit={(e) => handleEdit(e, i, categoryWithProduct.id)}
-                >
-                  <input name="name" defaultValue={categoryWithProduct.name} />
-                  <button disabled={submitting}>確定</button>
-                </form>
-                <button onClick={() => toggleEditMode(i)}>キャンセル</button>
-              </>
-            ) : (
-              <>
-                <Link href={`/categories/${categoryWithProduct.id}`}>
-                  {categoryWithProduct.name}
-                </Link>
+      <Stack mt="4">
+        {categoryWithProducts.map((categoryWithProduct, i) => (
+          <Box
+            border="1px"
+            borderColor="ActiveCaption"
+            p="3"
+            rounded="lg"
+            key={i}
+          >
+            <h2>
+              {isEditList[i] ? (
+                <Flex>
+                  <form
+                    onSubmit={(e) => handleEdit(e, i, categoryWithProduct.id)}
+                  >
+                    <Input
+                      name="name"
+                      defaultValue={categoryWithProduct.name}
+                    />
+                    <Button colorScheme="blue" disabled={submitting}>
+                      確定
+                    </Button>
+                  </form>
+                  <Button ml="4" onClick={() => toggleEditMode(i)}>
+                    キャンセル
+                  </Button>
+                </Flex>
+              ) : (
+                <>
+                  <Link href={`/categories/${categoryWithProduct.id}`} passHref>
+                    <Text as="a" fontSize="lg" fontWeight="bold">
+                      {categoryWithProduct.name}
+                    </Text>
+                  </Link>
 
-                <button onClick={() => toggleEditMode(i)}>edit</button>
-              </>
+                  <Button
+                    colorScheme="orange"
+                    ml="3"
+                    onClick={() => toggleEditMode(i)}
+                  >
+                    edit
+                  </Button>
+                </>
+              )}
+            </h2>
+            {categoryWithProduct.products.length === 0 && (
+              <span>該当する商品はありません</span>
             )}
-          </h2>
-          {categoryWithProduct.products.length === 0 && (
-            <span>該当する商品はありません</span>
-          )}
-          {categoryWithProduct.products.map((product, productIndex) => (
-            <Fragment key={`product-${productIndex}`}>
-              <li>{product.name}</li>
-              <li>&yen;{product.price}</li>
-            </Fragment>
-          ))}
-        </ul>
-      ))}
-    </>
+            {categoryWithProduct.products.map((product, productIndex) => (
+              <Fragment key={`product-${productIndex}`}>
+                <li>{product.name}</li>
+                <li>&yen;{product.price}</li>
+              </Fragment>
+            ))}
+          </Box>
+        ))}
+      </Stack>
+    </Container>
   )
 }
 
