@@ -1,5 +1,5 @@
 query GetCategoriesWithProduct {
-  categories {
+  categories(order_by: { id: asc }) {
     id
     name
     product_categories {

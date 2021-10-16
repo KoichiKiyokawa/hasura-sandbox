@@ -1,0 +1,8 @@
+mutation UpdateCategory($id: bigint = "", $object: categories_set_input = {}) {
+  update_categories(where: { id: { _eq: $id } }, _set: $object) {
+    returning {
+      id
+      name
+    }
+  }
+}

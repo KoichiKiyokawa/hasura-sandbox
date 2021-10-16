@@ -2057,6 +2057,14 @@ export type GetCategoryByIdQueryVariables = Exact<{
 
 export type GetCategoryByIdQuery = { __typename?: 'query_root', categories: Array<{ __typename?: 'categories', id: any, name: string, created_at: any, updated_at: any }> };
 
+export type UpdateCategoryMutationVariables = Exact<{
+  id?: Maybe<Scalars['bigint']>;
+  object?: Maybe<Categories_Set_Input>;
+}>;
+
+
+export type UpdateCategoryMutation = { __typename?: 'mutation_root', update_categories?: { __typename?: 'categories_mutation_response', returning: Array<{ __typename?: 'categories', id: any, name: string }> } | null | undefined };
+
 
 export const CreateCategoryDocument = gql`
     mutation CreateCategory($object: categories_insert_input = {}) {
@@ -2094,7 +2102,7 @@ export type CreateCategoryMutationResult = Apollo.MutationResult<CreateCategoryM
 export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<CreateCategoryMutation, CreateCategoryMutationVariables>;
 export const GetCategoriesWithProductDocument = gql`
     query GetCategoriesWithProduct {
-  categories {
+  categories(order_by: {id: asc}) {
     id
     name
     product_categories {
@@ -2172,3 +2180,40 @@ export function useGetCategoryByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetCategoryByIdQueryHookResult = ReturnType<typeof useGetCategoryByIdQuery>;
 export type GetCategoryByIdLazyQueryHookResult = ReturnType<typeof useGetCategoryByIdLazyQuery>;
 export type GetCategoryByIdQueryResult = Apollo.QueryResult<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>;
+export const UpdateCategoryDocument = gql`
+    mutation UpdateCategory($id: bigint = "", $object: categories_set_input = {}) {
+  update_categories(where: {id: {_eq: $id}}, _set: $object) {
+    returning {
+      id
+      name
+    }
+  }
+}
+    `;
+export type UpdateCategoryMutationFn = Apollo.MutationFunction<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+
+/**
+ * __useUpdateCategoryMutation__
+ *
+ * To run a mutation, you first call `useUpdateCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCategoryMutation, { data, loading, error }] = useUpdateCategoryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      object: // value for 'object'
+ *   },
+ * });
+ */
+export function useUpdateCategoryMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCategoryMutation, UpdateCategoryMutationVariables>(UpdateCategoryDocument, options);
+      }
+export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCategoryMutation>;
+export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
+export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
