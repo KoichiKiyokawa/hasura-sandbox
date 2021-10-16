@@ -1,0 +1,8 @@
+query GetCategoryById($id: bigint!) {
+  categories(where: { id: { _eq: $id } }, limit: 1) {
+    id
+    name
+    created_at
+    updated_at
+  }
+}

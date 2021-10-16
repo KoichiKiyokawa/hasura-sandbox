@@ -1,4 +1,4 @@
-INSERT INTO product (name, price) VALUES 
+INSERT INTO products (name, price) VALUES 
 ('product1', 100),
 ('product2', 200),
 ('product3', 300),
