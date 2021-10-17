@@ -3,6 +3,7 @@ import { Input } from '@chakra-ui/input'
 import { Box, Container, HStack, Stack, Text } from '@chakra-ui/layout'
 import Link from 'next/link'
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Loading } from 'src/components/navigators/Loading'
 import {
   useGetCategoriesWithProductQuery,
@@ -23,6 +24,8 @@ const CategoriesIndex = () => {
 
   const [updateCategory, { loading: submitting }] = useUpdateCategoryMutation()
 
+  const { register, handleSubmit } = useForm<{ name: string }[]>()
+
   const [isEditList, setIsEditList] = useState<boolean[]>([])
   useEffect(() => {
     setIsEditList(categoryWithProducts.map(() => false))
@@ -34,19 +37,15 @@ const CategoriesIndex = () => {
     )
   }
 
-  const handleEdit = (
-    e: React.FormEvent<HTMLFormElement>,
-    index: number,
-    id: string
-  ) => {
-    e.preventDefault()
-
-    const formData = new FormData(e.target as HTMLFormElement)
-    const submittingData = Object.fromEntries(formData.entries()) as {
-      name: string
-    }
-    updateCategory({ variables: { id, object: submittingData } }).then(() => {
-      toggleEditMode(index)
+  const handleEdit = (formValue: Record<number, { name: string }>) => {
+    const [index, submittingData] = Object.entries(formValue)[0]
+    updateCategory({
+      variables: {
+        id: categoryWithProducts[Number(index)].id,
+        object: submittingData,
+      },
+    }).then(() => {
+      toggleEditMode(Number(index))
     })
   }
 
@@ -78,15 +77,17 @@ const CategoriesIndex = () => {
             <h2>
               {isEditList[i] ? (
                 <HStack>
-                  <form
-                    onSubmit={(e) => handleEdit(e, i, categoryWithProduct.id)}
-                  >
+                  <form onSubmit={handleSubmit(handleEdit)}>
                     <HStack>
                       <Input
-                        name="name"
+                        {...register(`${i}.name`)}
                         defaultValue={categoryWithProduct.name}
                       />
-                      <Button colorScheme="blue" disabled={submitting}>
+                      <Button
+                        type="submit"
+                        colorScheme="blue"
+                        disabled={submitting}
+                      >
                         確定
                       </Button>
                     </HStack>
