@@ -1,12 +1,12 @@
-import { useRouter } from "next/router"
-import React, { useCallback, useEffect } from "react"
-import { ERROR_MESSAGES } from "src/constants/error"
-import { useCreateCategoryMutation } from "src/generated/gql"
-import { useForm } from "src/hooks/form"
+import { useRouter } from 'next/router'
+import React, { useEffect } from 'react'
+import { ERROR_MESSAGES } from 'src/constants/error'
+import { useCreateCategoryMutation } from 'src/generated/gql'
+import { useForm } from 'src/hooks/form'
 
 const CategoriesNew = () => {
   const router = useRouter()
-  const { form, handleFormChange } = useForm({ name: "" })
+  const { form, register, handleFormChange } = useForm({ name: '' })
   const [createCategory, { loading, error }] = useCreateCategoryMutation({
     variables: { object: { name: form.name } },
   })
@@ -19,7 +19,7 @@ const CategoriesNew = () => {
     e.preventDefault()
     createCategory({ variables: { object: form } })
       .then(() => {
-        router.push("/categories")
+        router.push('/categories')
       })
       .catch(() => {
         alert(ERROR_MESSAGES.DEFAULT_NETWORK_ERROR)
@@ -32,7 +32,7 @@ const CategoriesNew = () => {
       <form onSubmit={onSubmit}>
         <label>
           カテゴリ名
-          <input name="name" onChange={handleFormChange} />
+          <input {...register('name')} onChange={handleFormChange} />
         </label>
         <button disabled={loading}>作成</button>
       </form>
