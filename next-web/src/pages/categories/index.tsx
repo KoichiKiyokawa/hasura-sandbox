@@ -1,13 +1,13 @@
-import { Button } from "@chakra-ui/button"
-import { Input } from "@chakra-ui/input"
-import { Box, Container, Flex, HStack, Stack, Text } from "@chakra-ui/layout"
-import Link from "next/link"
-import { Fragment, useEffect, useMemo, useState } from "react"
-import { Loading } from "src/components/navigators/Loading"
+import { Button } from '@chakra-ui/button'
+import { Input } from '@chakra-ui/input'
+import { Box, Container, HStack, Stack, Text } from '@chakra-ui/layout'
+import Link from 'next/link'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Loading } from 'src/components/navigators/Loading'
 import {
   useGetCategoriesWithProductQuery,
   useUpdateCategoryMutation,
-} from "src/generated/gql"
+} from 'src/generated/gql'
 
 const CategoriesIndex = () => {
   const { data, loading, error } = useGetCategoriesWithProductQuery()
@@ -77,22 +77,24 @@ const CategoriesIndex = () => {
           >
             <h2>
               {isEditList[i] ? (
-                <Flex>
+                <HStack>
                   <form
                     onSubmit={(e) => handleEdit(e, i, categoryWithProduct.id)}
                   >
-                    <Input
-                      name="name"
-                      defaultValue={categoryWithProduct.name}
-                    />
-                    <Button colorScheme="blue" disabled={submitting}>
-                      確定
-                    </Button>
+                    <HStack>
+                      <Input
+                        name="name"
+                        defaultValue={categoryWithProduct.name}
+                      />
+                      <Button colorScheme="blue" disabled={submitting}>
+                        確定
+                      </Button>
+                    </HStack>
                   </form>
                   <Button ml="4" onClick={() => toggleEditMode(i)}>
                     キャンセル
                   </Button>
-                </Flex>
+                </HStack>
               ) : (
                 <>
                   <Link href={`/categories/${categoryWithProduct.id}`} passHref>

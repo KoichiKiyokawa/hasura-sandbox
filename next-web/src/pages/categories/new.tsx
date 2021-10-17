@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useForm, FormState, UseFormRegister, Path } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { ERROR_MESSAGES } from 'src/constants/error'
 import { useCreateCategoryMutation } from 'src/generated/gql'
 import { z } from 'zod'
@@ -31,26 +31,23 @@ const CategoriesNew = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    setError,
   } = useForm<Form>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
   })
-  console.log(errors)
 
-  const [createCategory, { loading, error }] = useCreateCategoryMutation()
-
-  useEffect(() => {
-    if (error) alert(ERROR_MESSAGES.DEFAULT_NETWORK_ERROR)
-  }, [error])
+  const [createCategory, { loading }] = useCreateCategoryMutation()
 
   const onSubmit = (form: Form) => {
     createCategory({ variables: { object: form } })
       .then(() => {
         router.push('/categories')
       })
-      .catch(() => {
-        alert(ERROR_MESSAGES.DEFAULT_NETWORK_ERROR)
+      .catch((err) => {
+        if (err.message.includes('duplicate'))
+          setError('name', { message: 'すでに登録されているカテゴリ名です' })
       })
   }
 
@@ -70,7 +67,7 @@ const CategoriesNew = () => {
           <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
 
-        <Button type="submit" disabled={loading} mt="2">
+        <Button type="submit" disabled={isSubmitting || loading} mt="2">
           作成
         </Button>
       </form>
