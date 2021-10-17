@@ -1,3 +1,7 @@
+import { Button } from '@chakra-ui/button'
+import { FormControl, FormLabel } from '@chakra-ui/form-control'
+import { Input } from '@chakra-ui/input'
+import { Container, Text } from '@chakra-ui/layout'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { ERROR_MESSAGES } from 'src/constants/error'
@@ -27,16 +31,23 @@ const CategoriesNew = () => {
   }
 
   return (
-    <>
-      <h1>categories new</h1>
+    <Container>
+      <Text as="h1" fontWeight="extrabold" fontSize="lg">
+        categories new
+      </Text>
+
       <form onSubmit={onSubmit}>
-        <label>
-          カテゴリ名
-          <input {...register('name')} onChange={handleFormChange} />
-        </label>
-        <button disabled={loading}>作成</button>
+        <FormControl id="category-name">
+          <FormLabel>カテゴリ名</FormLabel>
+          <Input {...register('name')} onChange={handleFormChange} required />
+        </FormControl>
+
+        <Button disabled={loading} mt="2">
+          作成
+        </Button>
       </form>
-    </>
+    </Container>
   )
 }
+
 export default React.memo(CategoriesNew)
