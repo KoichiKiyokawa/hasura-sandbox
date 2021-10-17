@@ -1,26 +1,50 @@
 import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+} from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Container, Text } from '@chakra-ui/layout'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
+import { useForm, FormState, UseFormRegister, Path } from 'react-hook-form'
 import { ERROR_MESSAGES } from 'src/constants/error'
 import { useCreateCategoryMutation } from 'src/generated/gql'
-import { useForm } from 'src/hooks/form'
+import { z } from 'zod'
+
+const schema = z.object({
+  name: z
+    .string()
+    .nonempty('入力必須です')
+    .max(8, { message: 'カテゴリ名は8文字以下にしてください' }),
+})
+
+type Form = {
+  name: string
+}
 
 const CategoriesNew = () => {
   const router = useRouter()
-  const { form, register, handleFormChange } = useForm({ name: '' })
-  const [createCategory, { loading, error }] = useCreateCategoryMutation({
-    variables: { object: { name: form.name } },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Form>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
   })
+  console.log(errors)
+
+  const [createCategory, { loading, error }] = useCreateCategoryMutation()
 
   useEffect(() => {
     if (error) alert(ERROR_MESSAGES.DEFAULT_NETWORK_ERROR)
   }, [error])
 
-  const onSubmit: React.FormEventHandler = (e) => {
-    e.preventDefault()
+  const onSubmit = (form: Form) => {
     createCategory({ variables: { object: form } })
       .then(() => {
         router.push('/categories')
@@ -32,17 +56,21 @@ const CategoriesNew = () => {
 
   return (
     <Container>
+      <Head>
+        <title>カテゴリ新規作成</title>
+      </Head>
       <Text as="h1" fontWeight="extrabold" fontSize="lg">
         categories new
       </Text>
 
-      <form onSubmit={onSubmit}>
-        <FormControl id="category-name">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormControl id="category-name" isInvalid={Boolean(errors.name)}>
           <FormLabel>カテゴリ名</FormLabel>
-          <Input {...register('name')} onChange={handleFormChange} required />
+          <Input {...register('name')} />
+          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
 
-        <Button disabled={loading} mt="2">
+        <Button type="submit" disabled={loading} mt="2">
           作成
         </Button>
       </form>
